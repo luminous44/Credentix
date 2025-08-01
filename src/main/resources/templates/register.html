@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base :: layout(~{::section})">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+</head>
+<body>
+
+<section>
+  <h4 class="text-center p-2">Registration Here</h4>
+    <!-- Success Message -->
+    <th:block th:if="${session.msg}">
+        <p class="text-center small">[[${session.msg}]]</p>
+    </th:block>
+
+
+
+    <form class="col-md-4 offset-md-4" th:action="@{/createUser}" method="post" th:object="${user}">
+    <div class="mb-3">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="name" th:field="*{name}">
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="email" th:field="*{email}">
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" th:field="*{password}">
+      </div>
+
+      <div class="mb-3">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" id="city" th:field="*{city}">
+      </div>
+
+     <center> <button type="submit" class="btn btn-primary">Submit</button></center>
+    </form>
+  </div>
+
+</section>
+
+
+</body>
+</html>
