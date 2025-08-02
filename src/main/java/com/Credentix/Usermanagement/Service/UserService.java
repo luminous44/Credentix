@@ -14,7 +14,6 @@ public class UserService {
        return repo.save(user);
     }
     public boolean isExistUser(String email){
-
         return  repo.existsByEmail(email);
     }
 }
