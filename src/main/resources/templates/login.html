@@ -9,11 +9,17 @@
 <section>
   <h4 class="text-center p-2">Log In</h4>
 
-  <form class="col-md-4 offset-md-4" >
+  <form class="col-md-4 offset-md-4" action="/login" method="post">
+    <div th:if="${param.error}" class="alert alert-danger">
+      Invalid email and password
+    </div>
+    <div th:if="${param.logout}" class="alert alert success">
+      LogOut Successfully
+    </div>
 
     <div class="mb-3">
       <label for="email" class="form-label">Email address</label>
-      <input type="email" class="form-control" id="email" name="email">
+      <input type="email" class="form-control" id="email" name="username">
     </div>
 
     <div class="mb-3">
