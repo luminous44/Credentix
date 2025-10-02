@@ -17,6 +17,7 @@ public class HomeController {
 
     @Autowired
     private UserService service;
+
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @GetMapping("/")
     public String index(){
