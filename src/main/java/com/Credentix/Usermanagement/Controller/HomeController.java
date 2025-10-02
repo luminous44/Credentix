@@ -33,6 +33,7 @@ public class HomeController {
 
         return "register";
     }
+
     @PostMapping("/createUser")
     public String createUser(@ModelAttribute User user, HttpSession session){
        if (service.isExistUser(user.getEmail())){
