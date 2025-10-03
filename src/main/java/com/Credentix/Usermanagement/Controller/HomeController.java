@@ -12,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Arrays;
-
 @Controller
 public class HomeController {
 
@@ -23,58 +21,91 @@ public class HomeController {
     @Autowired
     private UserRepository repository;
 
-    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    // ✅ Do not make this static
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/")
-    public String index(){
+    public String index() {
         return "index";
     }
+
     @GetMapping("/signIn")
-    public String login(){
+    public String login() {
         return "login";
     }
-    @GetMapping("/register")
-    public String register(Model model,HttpSession session){
-        model.addAttribute("user", new User());
 
+    @GetMapping("/register")
+    public String register(Model model, HttpSession session) {
+        model.addAttribute("user", new User());
         return "register";
     }
+
     @GetMapping("/loadForgetPassword")
-    public String loadForgetPassword(){
+    public String loadForgetPassword() {
         return "forget_password";
     }
-    @GetMapping("/loadRestPassword")
-    public String loadResetPassword(){
-        return "reset_password";
-    }
+
     @PostMapping("/createUser")
-    public String createUser(@ModelAttribute User user, HttpSession session){
-       if (service.isExistUser(user.getEmail())){
-           session.setAttribute("msg","Already an account is associated with this email!! Try again");
-       }else {
-           user.setPassword(passwordEncoder.encode(user.getPassword()));
-           user.setRole("USER");
-           User createdUser = service.createUser(user);
-           if(createdUser!=null){
-               session.setAttribute("msg","Registration successful");
-           }
-           else {
-               session.setAttribute("msg","Something went wrong!! Try again");
-           }
-       }
-        return ("redirect:/register");
+    public String createUser(@ModelAttribute User user, HttpSession session) {
+        if (service.isExistUser(user.getEmail())) {
+            session.setAttribute("msg", "Already an account is associated with this email!! Try again");
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRole("USER");
+            User createdUser = service.createUser(user);
+            if (createdUser != null) {
+                session.setAttribute("msg", "Registration successful");
+            } else {
+                session.setAttribute("msg", "Something went wrong!! Try again");
+            }
+        }
+        return "redirect:/register";
     }
 
     @PostMapping("/forgetPassword")
-    public String forgetPassword(@RequestParam String email, @RequestParam String phone, RedirectAttributes attributes){
+    public String forgetPassword(@RequestParam String email,
+                                 @RequestParam String phone,
+                                 RedirectAttributes attributes) {
 
-        User user = repository.findByEmailAndPhone(email,phone);
+        User user = repository.findByEmailAndPhone(email, phone);
 
-
-        if (user != null){
-
-            return "reset_password";
+        if (user != null) {
+            return "redirect:/loadResetPassword?uid=" + user.getId();
         }
-        attributes.addFlashAttribute("error","Invalid email or phone");
+
+        attributes.addFlashAttribute("error", "Invalid email or phone");
         return "redirect:/loadForgetPassword";
+    }
+
+    @GetMapping("/loadResetPassword")
+    public String loadResetPassword(@RequestParam Integer uid, Model model) {
+        model.addAttribute("uid", uid);
+        return "reset_password";
+    }
+
+    @PostMapping("/resetPassword")
+    public String resetPassword(@RequestParam Integer uid,
+                                @RequestParam("newPass") String newPassword,
+                                @RequestParam("confPass") String confirmPassword,
+                                RedirectAttributes attributes) {
+
+        User user = repository.findById(uid).orElse(null);
+
+        if (user == null) {
+            attributes.addFlashAttribute("error", "User not found");
+            return "redirect:/loadForgetPassword";
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            attributes.addFlashAttribute("error", "Passwords do not match");
+            return "redirect:/loadResetPassword?uid=" + uid;
+        }
+
+        user.setPassword(passwordEncoder.encode(confirmPassword));
+        repository.save(user);
+
+        attributes.addFlashAttribute("success", "Password changed successfully. Please login again.");
+        return "redirect:/signIn";
     }
 }
