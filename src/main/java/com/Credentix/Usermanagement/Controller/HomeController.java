@@ -33,7 +33,14 @@ public class HomeController {
 
         return "register";
     }
-
+    @GetMapping("/loadForgetPassword")
+    public String loadForgetPassword(){
+        return "forget_password";
+    }
+    @GetMapping("/loadRestPassword")
+    public String loadResetPassword(){
+        return "reset_password";
+    }
     @PostMapping("/createUser")
     public String createUser(@ModelAttribute User user, HttpSession session){
        if (service.isExistUser(user.getEmail())){

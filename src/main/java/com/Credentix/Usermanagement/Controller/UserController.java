@@ -36,6 +36,7 @@ public class UserController {
         return "user/change_password";
     }
 
+
     @PostMapping("/changePassw")
     public String processPasswordChange(@RequestParam("oldPass") String oldPassword,
                                         @RequestParam("newPass") String newPassword,
@@ -71,6 +72,7 @@ public class UserController {
         redirectAttributes.addFlashAttribute("success", "Password changed successfully!");
         return "redirect:/user/loadChangePass";
     }
+
 
     @ModelAttribute
     public void userDetails(Model model, Principal principal) {
