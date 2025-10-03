@@ -1,6 +1,7 @@
 package com.Credentix.Usermanagement.Controller;
 
 import com.Credentix.Usermanagement.Entity.User;
+import com.Credentix.Usermanagement.Repo.UserRepository;
 import com.Credentix.Usermanagement.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 
@@ -17,6 +19,9 @@ public class HomeController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    private UserRepository repository;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @GetMapping("/")
@@ -57,5 +62,19 @@ public class HomeController {
            }
        }
         return ("redirect:/register");
+    }
+
+    @PostMapping("/forgetPassword")
+    public String forgetPassword(@RequestParam String email, @RequestParam String phone, RedirectAttributes attributes){
+
+        User user = repository.findByEmailAndPhone(email,phone);
+
+
+        if (user != null){
+
+            return "reset_password";
+        }
+        attributes.addFlashAttribute("error","Invalid email or phone");
+        return "redirect:/loadForgetPassword";
     }
 }
