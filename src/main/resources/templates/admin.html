@@ -7,10 +7,7 @@
 </head>
 <body>
 <section>
-    <h1>Admin page</h1>
-
-    <th:block th:if="${#lists.isEmpty(allUser) == false}">
-        <div class="container my-5 col-md-8">
+        <div th:if="${success}" class="container my-5 col-md-8">
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
@@ -27,24 +24,15 @@
                     <td th:text="${u.name}"></td>
                     <td th:text="${u.email}"></td>
                     <td th:text="${u.city}"></td>
-                    <td>
-                        <a class="btn btn-secondary btn-sm" th:href="#">Lock</a>
-                    </td>
+                    <td> <a th:href="@{/lock}"
+                            class="btn btn-warning btn-sm">Disable</a>
+                        <a th:href="@{/lock}"
+                           class="btn btn-danger btn-sm">Lock</a></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-    </th:block>
-
-    <th:block th:if="${#lists.isEmpty(allUser)}">
-        <center><p>No users found.</p></center>
-    </th:block>
+    <div th:if="${error}"  th:text="${error}"></div>
 </section>
-
-
-
 </body>
-
-
-
 </html>

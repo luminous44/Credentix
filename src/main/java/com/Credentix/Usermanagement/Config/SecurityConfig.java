@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .failureUrl("/signIn?error=true")
                         .permitAll()
                 )
-                .authenticationProvider(authenticationProvider()) // ✅ Add this line
+                .authenticationProvider(authenticationProvider())
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
